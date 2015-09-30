@@ -1,0 +1,80 @@
+/*
+ * Source Code Name: XT_BT_Led_v1
+ * PABLOXT - Sept 15
+ * Arduino Sketch to understand the use of SoftwareSerial Library using HC-05 bluetooth slave to
+ * send/receive data and control a LED based on a specified user Action
+ *
+ * Tested with Android using App Bluetooth Terminal
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+//Library to use Arduino pins as communication ports instead of default RX(0) TX(1) pins to avoid problems while using USB.
+#include <SoftwareSerial.h>
+
+//Constants definition
+#define LED 13 //Built-In Pin on Arduino UNO R3
+#define Rx 4  //Connected cross wired - Arduino Pin 3
+#define Tx 3  //Connected cross wired - Arduino Pin 4
+
+
+//Declare a new Serial port for Bluetooth connection
+SoftwareSerial BTSerial(Rx, Tx);
+byte pinStatus = 0;
+char action = ' ';
+
+void setup()
+{
+  pinMode(LED, OUTPUT);
+  digitalWrite(LED, LOW);
+  
+  // Bluetooth Serial port baudrate setup
+  BTSerial.begin(9600);
+  BTSerial.flush();
+  delay(500);
+  
+  //Keep Arduino Serial for debugging on Serial Monitor tool on Arduino IDE
+  Serial.begin(9600);
+  Serial.println("Ready");
+}
+
+void loop()
+{
+  if (BTSerial.available()){
+
+    //Read Bluetooth data received
+    action = BTSerial.read();
+    BTSerial.flush();
+    Serial.println(action);
+    
+// If received char is "a" LED mode is changed to HIGH or LOW
+    if (action == 'a'){
+      Serial.println("Accepted");
+      change(LED); 
+      BTSerial.println("Accepted");
+    }
+    else{
+    Serial.println("Wrong Letter");
+    BTSerial.println("Wrong Letter");
+    }
+  }
+}
+
+//Functions
+void change(int pinNum) {
+  digitalWrite(pinNum, pinStatus); 
+  pinStatus = !pinStatus;
+}
+
+/**** EOF ****/
