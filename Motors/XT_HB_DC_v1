@@ -1,0 +1,77 @@
+/*
+ * Source Code Name: XT_HB_DC_v1
+ * Oct 15
+ * Arduino Sketch to understand the use of PWD Pins and DC Motors using H-Bridge L298N chip to
+ * control 2 DC motors giving acceleration by intervals.
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+//Motor A
+int IN1 = 7;    // Input1 connected to pin 7
+int IN2 = 8;    // Input2 connected to pin 8
+int ENA = 6;    // ENA    connected to pin 6
+//Motor B
+int IN3 = 5;    // Input3 connected to pin 5
+int IN4 = 4;    // Input4 connected to pin 4 
+int ENB = 3;    // ENB    connected to pin 3
+
+int dir = 'F'; //Direction (F=Forward, B=Backwards)
+
+void setup()
+{
+ pinMode (ENA, OUTPUT); 
+ pinMode (IN1, OUTPUT);
+ pinMode (IN2, OUTPUT);
+
+ pinMode (ENB, OUTPUT); 
+ pinMode (IN3, OUTPUT);
+ pinMode (IN4, OUTPUT);
+}
+void loop()
+{
+
+if(dir == 'F')
+{
+//Forward
+  digitalWrite (IN3, HIGH);
+  digitalWrite (IN4, LOW);
+  digitalWrite (IN1, HIGH);
+  digitalWrite (IN2, LOW);
+  dir = 'B';
+}
+else
+{
+  digitalWrite (IN3, LOW);
+  digitalWrite (IN4, HIGH);
+  digitalWrite (IN1, LOW);
+  digitalWrite (IN2, HIGH);  
+  dir = 'F';
+}
+//Different Speeds
+  analogWrite(ENB,55);
+  analogWrite(ENA,55);
+  delay(2000);
+  analogWrite(ENB,105);
+  analogWrite(ENA,105);
+  delay(2000);
+  analogWrite(ENB,255);
+  analogWrite(ENA,255);
+  delay(2000);
+  // Turn off both motors and wait 5 secs
+  analogWrite(ENB,0);
+  analogWrite(ENA,0);
+  delay(5000);
+
+}
